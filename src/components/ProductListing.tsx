@@ -1,4 +1,4 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { Product } from "./Product";
 
 export function ProductListing() {
@@ -8,6 +8,13 @@ export function ProductListing() {
     name: string,
     price: string
   }[]>([]);
+
+  const totalPrice = useMemo(() => {
+    return productList.reduce((total, product) => {
+      // Costful operation with strings
+      return total + Number(product.price.replace('R$ ', '').replace(',', '.'));
+    }, 0);
+  }, [productList]);
   
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -35,6 +42,8 @@ export function ProductListing() {
           Buscar
         </button>
       </form>
+
+      <h2>Total: R$ {totalPrice.toLocaleString('pt-BR', {maximumFractionDigits: 2})}</h2>
 
       {productList.map(product => (
         <Product

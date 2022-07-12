@@ -1,15 +1,22 @@
+import { memo } from "react";
+
 interface ProductProps {
-  id: number;
-  name: string;
-  price: string;
+  product: {
+    id: number;
+    name: string;
+    price: string;
+  };
 }
 
-export function Product({
-  id,
-  name,
-  price
+function ProductComponent({
+  product
 } : ProductProps) {
   return (
-    <div>{name} -<strong> R$ {price}</strong></div>
+    <div>{product.name} - <strong>R$ {product.price}</strong></div>
   );
 }
+
+export const Product = memo(ProductComponent, (prevProps, newProps) => {
+  // Deep comparison, a little bit more costful for the application
+  return Object.is(prevProps.product, newProps.product);
+});

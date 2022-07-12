@@ -37,7 +37,9 @@ export function ProductListing() {
       </form>
 
       {productList.map(product => (
-        <Product id={product.id} name={product.name} price={product.price} />
+        <Product
+          product={product}
+        />
       ))}
     </>
   )

@@ -1,20 +1,14 @@
 import { FormEvent, useCallback, useMemo, useState } from "react";
 import { Product } from "./Product";
 
+type Results = {
+  totalPrice: number;
+  data: any[];
+}
+
 export function ProductListing() {
   const [search, setSearch] = useState('');
-  const [productList, setProductList] = useState<{
-    id: number,
-    name: string,
-    price: string
-  }[]>([]);
-
-  const totalPrice = useMemo(() => {
-    return productList.reduce((total, product) => {
-      // Costful operation with strings
-      return total + Number(product.price.replace('R$ ', '').replace(',', '.'));
-    }, 0);
-  }, [productList]);
+  const [results, setResults] = useState<Results>();
   
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -25,7 +19,12 @@ export function ProductListing() {
     const response = await fetch(`http://localhost:3333/products?q=${search}`);
     const data = await response.json();
 
-    setProductList(data);
+    const totalPrice = data.reduce((total: number, product: any) => {
+      // Costful operation with strings
+      return total + Number(product.price.replace('R$ ', '').replace(',', '.'));
+    }, 0);
+
+    setResults({ totalPrice, data });
   }
 
   const addToWishlist = useCallback((id: number) => {
@@ -47,10 +46,11 @@ export function ProductListing() {
         </button>
       </form>
 
-      <h2>Total: R$ {totalPrice.toLocaleString('pt-BR', {maximumFractionDigits: 2})}</h2>
+      <h2>Total: R$ {results?.totalPrice.toLocaleString('pt-BR', {maximumFractionDigits: 2})}</h2>
 
-      {productList.map(product => (
+      {results?.data.map((product: any) => (
         <Product
+          key={product.id}
           product={product}
           onAddToWishlist={addToWishlist}
         />

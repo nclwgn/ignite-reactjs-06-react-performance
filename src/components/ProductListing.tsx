@@ -1,4 +1,4 @@
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useCallback, useMemo, useState } from "react";
 import { Product } from "./Product";
 
 export function ProductListing() {
@@ -28,6 +28,10 @@ export function ProductListing() {
     setProductList(data);
   }
 
+  const addToWishlist = useCallback((id: number) => {
+    console.log(`added ${id} to wishlist`);
+  }, []);
+
   return (
     <>
       <h1>Minha listagem de produtos</h1>
@@ -48,6 +52,7 @@ export function ProductListing() {
       {productList.map(product => (
         <Product
           product={product}
+          onAddToWishlist={addToWishlist}
         />
       ))}
     </>
